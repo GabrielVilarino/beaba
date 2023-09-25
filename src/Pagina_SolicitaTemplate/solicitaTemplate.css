@@ -1,0 +1,139 @@
+.solicitaTemplate__container {
+    display: flex;
+  }
+
+.solicitaTemplate_content{
+    width: 50%;
+    flex-direction: column;
+}
+
+.solicitaTemplate_content h1{
+  font-size: 35px;
+  margin-left: 10%;
+  margin-top: 40px;
+  color: #016823;
+  margin-bottom: 30px;
+}
+
+.content-1-fixo{
+  margin-left: 10%;
+  margin-bottom: 40px;
+  color: #016823;
+  font-size: 20px;
+}
+
+.content-1-fixo input{
+  width: 200px;
+  height: 25px;
+  border: 1px solid #016823;
+  border-radius: 10px;
+}
+
+.content-1{
+  margin-left: 10%;
+  color: #016823;
+  font-size: 20px;
+}
+
+.content-1 input{
+  width: 200px;
+  height: 25px;
+  border: 1px solid #016823;
+  border-radius: 10px;
+}
+
+.tipoCampo{
+  margin-bottom: 30px;
+  margin-left: 13px;
+  margin-top: 10px;
+}
+
+.content-1-container{
+  max-height: 290px;
+  overflow: auto;
+}
+
+.content-1-container::-webkit-scrollbar {
+  width: 8px; /* Largura da barra de rolagem */
+}
+
+.content-1-container::-webkit-scrollbar-track {
+background: #d0d0d0; /* Cor de fundo do trilho da barra de rolagem */
+border-radius: 5px;
+}
+
+.content-1-container::-webkit-scrollbar-thumb {
+background: #016823; /* Cor de fundo do thumb */
+border-radius: 5px; /* Borda arredondada do thumb */
+}
+
+.content-2-container{
+  display: flex;
+  flex-direction: column;
+  margin: 150px 292px 0px 122px;
+  
+}
+
+.content-2-container select{
+  width: 200px;
+  height: 40px;
+  text-align: center;
+  color: #016823;
+  border: 1px solid #016823;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.content-2-container input{
+  width: 200px;
+  height: 25px;
+  border: 1px solid #016823;
+  border-radius: 10px;
+  color: #016823;
+  font-weight: bold;
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.content-2-container input::placeholder{
+  color: #016823;
+  text-align: center;
+  font-size: 12px;
+}
+
+.content-2-container input:focus::placeholder{
+  color: transparent;
+}
+
+
+.content-2-container button{
+  padding: 10px 30px;
+  border: 1px solid #016823;
+  border-radius: 15px;
+  background-color: #016823;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.content-2-container button:hover{
+  filter: brightness(0.9);
+}
+
+.logout{
+  position: absolute;
+  cursor: pointer;
+  bottom: 32px;
+  right: 30px;
+  margin-bottom: 30px;
+}
+
+.logout:hover{
+  filter: brightness(0.7);
+}

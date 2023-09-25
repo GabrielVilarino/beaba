@@ -1,0 +1,101 @@
+.editarPerfil__container {
+  display: flex;
+}
+
+.editarPerfil_content{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+} 
+
+.editarPerfil_content h1{
+  font-size: 35px;
+  margin-top: 40px;
+  color: #016823;
+}
+
+.editarPerfil_content img{
+  margin-top: 20px;
+}
+
+.fotoPerfil{
+  width: 118px;
+  height: 118px;
+}
+
+.buttonEditaFoto{
+  background-color: transparent;
+  border: none;
+  margin-top: 20px;
+  font-size: 20px;
+  color: #016823;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.buttonEditaFoto:hover{
+  filter: brightness(0.5);
+}
+
+.formGrup form{
+  display: flex;
+  flex-direction: column;
+}
+
+.formGrup label{
+  margin-right: 10px;
+  color: #016823;
+}
+
+.formGrup input{
+  color: #016823;
+  border: none;
+  border-bottom: 1px solid #016823;
+  width: 200px;
+  padding: 4px;
+}
+
+.buttonEditaDados{
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+.buttonEditaDados img{
+  width: 20px;
+  height: 20px;
+}
+
+.buttonEditaDados:hover{
+  filter: brightness(0.8);
+}
+
+.buttonSalvar{
+  margin-top: 50px;
+  padding: 10px 50px;
+  background-color: #016823;
+  color: white;
+  border-radius: 10px;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.buttonSalvar:hover{
+  filter: brightness(0.8);
+}
+
+.logout{
+  position: absolute;
+  cursor: pointer;
+  bottom: 42px; 
+  right: 30px;
+  margin-bottom: 20px;
+}
+
+.logout:hover{
+  filter: brightness(0.7);
+}

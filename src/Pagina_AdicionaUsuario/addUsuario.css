@@ -1,0 +1,118 @@
+.addUsuario__container {
+    display: flex;
+  }
+
+.addUsuario_content{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.addUsuario_content h1{
+  font-size: 35px;
+  margin-top: 40px;
+  color: #016823;
+}
+
+.addUsuario_content img{
+  margin-top: 20px;
+}
+
+.fotoPerfil{
+  width: 118px;
+  height: 118px;
+}
+
+.buttonAddFoto{
+  background-color: transparent;
+  border: none;
+  margin-top: 20px;
+  font-size: 20px;
+  color: #016823;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.buttonAddFoto:hover{
+  filter: brightness(0.5);
+}
+
+.formGrup form{
+  display: flex;
+  flex-direction: column;
+}
+
+.formGrup label{
+  margin-right: 10px;
+  color: #016823;
+}
+
+.formGrup input{
+  color: #016823;
+  border: none;
+  border-bottom: 1px solid #016823;
+  width: 200px;
+  padding: 4px;
+  margin-bottom: 10px;
+}
+
+.buttonCadastrar{
+  margin-top: 30px;
+  padding: 10px 50px;
+  background-color: #016823;
+  color: white;
+  border-radius: 10px;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.buttonCadastrar:hover{
+  filter: brightness(0.8);
+}
+
+.logout{
+  position: absolute;
+  cursor: pointer;
+  bottom: 42px;
+  right: 30px;
+  margin-bottom: 30px;
+}
+
+.logout:hover{
+  filter: brightness(0.7);
+}
+
+.tipoPerfil{
+  width: 200px;
+  margin-left: 5px;
+  height: 40px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #016823;
+  color: #016823;
+  margin-top: 20px;
+}
+
+/*
+  const navigate = useNavigate();
+
+  let email = '';
+  let password = '';
+
+  const onSubmit = (e) => {
+    email = e.target.elements.email.value;
+    password = e.target.elements.password.value;
+
+    if( email === 'gabrielvilarino@hotmail.com' && password === '1234'){
+      navigate('/home');
+    }else if(email === 'gabrielvilarino@hotmail.com' && password === '123'){
+      navigate('/homeUsuario');
+    }else{
+      console.log('erro')
+    }
+  }
+*/

@@ -1,0 +1,91 @@
+.Pagina_HomeUsuario__container {
+    display: flex;
+  }
+
+.HomeUsuario{ 
+    width: 100%;
+    height: auto;
+    position: relative;
+}
+
+.HomeUsuario h1{
+    margin-top: 40px;
+    margin-left: 5%;
+    margin-bottom: 30px;
+    font-size: 35px; 
+    color: #016823;
+}
+
+.HomeUsuario__tabela_container{
+    max-height: 290px;
+    overflow: auto;
+    margin-right: 10px;
+}
+
+.HomeUsuario__tabela_container::-webkit-scrollbar {
+    width: 8px; /* Largura da barra de rolagem */
+  }
+  
+.HomeUsuario__tabela_container::-webkit-scrollbar-track {
+background: #d0d0d0; /* Cor de fundo do trilho da barra de rolagem */
+border-radius: 5px;
+}
+  
+.HomeUsuario__tabela_container::-webkit-scrollbar-thumb {
+background: #016823; /* Cor de fundo do thumb */
+border-radius: 5px; /* Borda arredondada do thumb */
+}
+
+.HomeUsuario__tabela{
+    width: 80%;
+    margin-left: 5%;
+    border-collapse: collapse;
+}
+
+.HomeUsuario__tabela tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.HomeUsuario__tabela tr:nth-child(even) {
+    background-color: #d8d8d8;
+}
+  
+
+.HomeUsuario__tabela th{
+    color: #016823;
+    font-size: 23px;
+}
+
+.HomeUsuario__tabela_cabecalho th{
+    background-color: #016823;
+    color: white;
+    padding: 10px 30px 10px 30px;
+}
+
+.HomeUsuario__tabela button{
+    background-color: #016823;
+    color: white;
+    margin-right: 10px;
+    padding: 5px 10px;
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.HomeUsuario__tabela button:hover{
+    filter: brightness(0.8);
+}
+
+.HomeUsuario__sair{
+    position: absolute;
+    cursor: pointer;
+    bottom: 42px;
+    right: 30px;
+    margin-bottom: 30px;
+}
+
+.HomeUsuario__sair:hover{
+    filter: brightness(0.7);
+} 

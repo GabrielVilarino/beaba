@@ -1,0 +1,8 @@
+.Header__Logo{
+    padding: 5px 0;
+    background-color: #016823;
+}
+
+.Header__Logo img{
+    margin-left: 2%;
+}
