@@ -1,28 +1,56 @@
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Login.css';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import foto from './assets/Foto.png';
 
 function Login() {
-  
+  const serverUrl = "http://localhost:3001";
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    senha: ''
+  });
 
-  let email = '';
-  let password = '';
+  const onSubmit = async (e) => {
+    e.preventDefault();
 
-  const onSubmit = (e) => {
-    email = e.target.elements.email.value;
-    password = e.target.elements.password.value;
-
-    if( email === 'gabrielvilarino@hotmail.com' && password === '1234'){
-      navigate('/home');
-    }else if(email === 'gabrielvilarino@hotmail.com' && password === '123'){
-      navigate('/homeUsuario');
-    }else{
-      console.log('erro')
+    if(formData.email === '' || formData.senha  === ''){
+      alert("Preencha todos os campos!");
     }
-  }
+
+    try{
+      const response = await axios.post(serverUrl + '/login', {
+        email: formData.email,
+        senha: formData.senha,
+      });
+
+      if(response.data.authenticated){
+        const {perfil} = response.data.user;
+        switch (perfil){
+          case 'admin':
+            navigate('/home');
+            break;
+          case 'user':
+            navigate('/homeUsuario');
+            break;
+          default:
+            navigate('/');
+        }
+      }
+    }catch(error){
+      console.error('Erro ao fazer login: ', error);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
     return (
     <div className='Login'>
@@ -34,11 +62,11 @@ function Login() {
           <form onSubmit={onSubmit}>
             <div className='formGrupo'>
               <label htmlFor='email'>E-mail:</label>
-              <input type='text' name='email'></input>
+              <input type='text' name='email' value={formData.email} onChange={handleChange}></input>
             </div>
             <div className='formGrupo'>
               <label htmlFor='senha'>Senha:</label>
-              <input type='password' name='password'></input>
+              <input type='password' name='senha' value={formData.senha} onChange={handleChange}></input>
             </div>
             <button className='buttonEntrar'>Entrar</button>
           </form>
