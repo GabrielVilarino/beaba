@@ -1,5 +1,4 @@
 
-
 .Menu{
     display: flex;
     flex-direction: column;
@@ -18,6 +17,7 @@
 .Menu__perfil img{
     width: 61px;
     height: 61px;
+    margin-left: -33%;
 }
 
 .Menu__perfil_content{
@@ -27,14 +27,14 @@
 
 .Menu__perfil_content p{
     color: white;
-    margin-left: 7%;
+    margin-left: 12%;
     margin-top: 5px;
 }
 
 .Menu__perfil_content h5{
     color: white;
     white-space: nowrap;
-    margin-left: 5%;
+    margin-left: 10%;
     font-size: 20px;
 }
 

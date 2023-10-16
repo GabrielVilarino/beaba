@@ -51,7 +51,7 @@ function AddUsuario() {
       ...formData,
       [e.target.name]: e.target.value,
     });
-  };
+  }; 
 
   return (
     <div className='addUsuario'>

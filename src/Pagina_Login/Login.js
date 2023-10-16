@@ -17,10 +17,6 @@ function Login() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if(formData.email === '' || formData.senha  === ''){
-      alert("Preencha todos os campos!");
-    }
-
     try{
       const response = await axios.post(serverUrl + '/login', {
         email: formData.email,
@@ -29,6 +25,10 @@ function Login() {
 
       if(response.data.authenticated){
         const {perfil} = response.data.user;
+        const {email} = response.data.user;
+
+        localStorage.setItem('userEmail', email);
+        
         switch (perfil){
           case 'admin':
             navigate('/home');
@@ -41,7 +41,8 @@ function Login() {
         }
       }
     }catch(error){
-      console.error('Erro ao fazer login: ', error);
+      const errorMessage = error.response.data.error;
+      alert(errorMessage);
     }
   };
 

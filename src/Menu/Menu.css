@@ -16,6 +16,7 @@
 .Menu__perfil img{
     width: 61px;
     height: 61px;
+    margin-left: -22%;
 }
 
 .Menu__perfil_content{
