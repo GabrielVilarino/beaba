@@ -1,3 +1,5 @@
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import './Pagina_HomeUsuario.css';
 import Header from '../Header/Header';
 import Menu from '../Menu_Usuario/menuUsuario';
@@ -5,6 +7,22 @@ import Footer from '../Footer/Footer';
 import logout from './assets/logout.png';
 
 function Pagina_HomeUsuario() {
+
+    const serverUrl = "http://localhost:3001";
+    const [templateData, setTemplateData] = useState(null);
+
+    useEffect(() => { 
+        const obterDadosDoTemplate = async () => {
+          try {
+            const response = await axios.get(`${serverUrl}/templates/ativos`);
+            setTemplateData(response.data);
+          } catch (error) {
+            console.error('Erro ao obter dados do Template:', error);
+          }
+        };
+        obterDadosDoTemplate();
+      }, []);
+
   return (
     <div className='Pagina_HomeUsuario'>
       <Header />
@@ -13,6 +31,7 @@ function Pagina_HomeUsuario() {
         <div className='HomeUsuario'>
             <h1>Templates</h1>
             <div className='HomeUsuario__tabela_container'>
+            {templateData ?(
             <table className='HomeUsuario__tabela'>
                 <tbody>
                     <tr className='HomeUsuario__tabela_cabecalho'>
@@ -21,62 +40,22 @@ function Pagina_HomeUsuario() {
                         <th>Formato</th>
                         <th>Ações</th>
                     </tr>
-                    <tr>
-                        <th>template1</th>
-                        <th>8</th>
-                        <th>XLSX</th>
-                        <th>
-                            <button>Download</button>
-                            <button>Upload</button>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>template2</th>
-                        <th>5</th>
-                        <th>CSV</th>
-                        <th>
-                            <button>Download</button>
-                            <button>Upload</button>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>template3</th>
-                        <th>6</th>
-                        <th>XLS</th>
-                        <th>
-                            <button>Download</button>
-                            <button>Upload</button>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>template4</th>
-                        <th>7</th>
-                        <th>XLS</th>
-                        <th>
-                            <button>Download</button>
-                            <button>Upload</button>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>template5</th>
-                        <th>4</th>
-                        <th>CSV</th>
-                        <th>
-                            <button>Download</button>
-                            <button>Upload</button>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>template6</th>
-                        <th>5</th>
-                        <th>XLSX</th>
-                        <th>
-                            <button>Download</button>
-                            <button>Upload</button>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
+                    {templateData.map((template) => (
+                        <tr key={template.id}>
+                            <th>{template.nome}</th>
+                            <th>{template.total_campos}</th>
+                            <th>{template.extensao}</th>
+                            <th>
+                                <button>Download</button>
+                                <button>Upload</button>
+                            </th>
+                        </tr>
+                    ))}
+                  </tbody>
+              </table>
+              ) : (
+                <p>Carregando dados dos templates</p>
+              )}
             </div>
         </div>
         <a href='/'><img src={logout} alt='Sair' className='HomeUsuario__sair'></img></a>

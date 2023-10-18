@@ -268,6 +268,217 @@ app.put("/usuario/comum", async (req, res) => {
     }
 });
 
+app.post("/template/cadastro", async (req, res) => {
+    try {
+        if (!connectionPromise) {
+            connectionPromise = await createConnection({
+                type: "postgres",
+                host: "localhost",
+                port: 5432,
+                username: "postgres",
+                password: "postgres",
+                database: "postgres",
+                logging: true
+            });
+        }
+        const connection = await connectionPromise;
+
+        const { nome, extensao, idUsuario } = req.body;
+
+        if (!nome || !extensao || !idUsuario) {
+            return res.status(400).json({ error: "Todos os campos são obrigatórios." });
+        }
+
+        const queryResult = await connection.query(
+            "INSERT INTO beaba.templates (nome, extensao, idUsuario, status, dataCriacao) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING id",
+            [nome, extensao, idUsuario, 'ativo']
+        );
+
+        console.log('Query Result:', queryResult);
+
+        const idTemplate = queryResult[0];
+
+        res.status(200).json({ id: idTemplate, message: "Template cadastrado com sucesso." });
+       
+    } catch (error) {
+        console.error("Erro ao cadastrar template: ", error);
+        res.status(500).json({ error: "Erro ao processar a solicitação" });
+    }
+});
+
+app.post("/template/cadastro/campos", async (req, res) => {
+    try {
+        if (!connectionPromise) {
+            connectionPromise = await createConnection({
+                type: "postgres",
+                host: "localhost",
+                port: 5432,
+                username: "postgres",
+                password: "postgres",
+                database: "postgres",
+                logging: true
+            });
+        }
+        const connection = await connectionPromise;
+
+        const { nome, tipo, idTemplate } = req.body;
+
+        if (!nome || !tipo || !idTemplate) {
+            return res.status(400).json({ error: "Todos os campos são obrigatórios." });
+        }
+
+        const queryResult = await connection.query(
+            "INSERT INTO beaba.campos (nome, tipo, idtemplate) VALUES ($1, $2, $3)",
+            [nome, tipo, idTemplate]
+        );
+
+        res.status(200).json({ message: "Campo cadastrado com sucesso." });
+       
+    } catch (error) {
+        console.error("Erro ao cadastrar campo: ", error);
+        res.status(500).json({ error: "Erro ao processar a solicitação" });
+    }
+});
+
+app.get("/templates", async (req, res) => {
+    try {
+        if (!connectionPromise) {
+            connectionPromise = await createConnection({
+                type: "postgres",
+                host: "localhost",
+                port: 5432,
+                username: "postgres",
+                password: "880708",
+                database: "postgres",
+                logging: true
+            });
+        }
+        const connection = await connectionPromise;
+
+        const queryResult = await connection.query(`
+            SELECT
+                t.*,
+                COALESCE(SUM(c.quantidade_campos), 0) AS total_campos
+            FROM
+                beaba.templates t
+            LEFT JOIN
+                (SELECT idtemplate, COUNT(id) AS quantidade_campos FROM beaba.campos GROUP BY idtemplate) c
+            ON
+                t.id = c.idtemplate
+            GROUP BY
+                t.id
+        `);
+        res.json(queryResult);
+    } catch (error) {
+        console.error("Erro ao obter templates: ", error);
+        res.status(500).json({ error: "Erro ao processar a solicitação" });
+    }
+});
+
+app.put("/templates/:id", async (req, res) => {
+    try {
+        if (!connectionPromise) {
+            connectionPromise = await createConnection({
+                type: "postgres",
+                host: "localhost",
+                port: 5432,
+                username: "postgres",
+                password: "880708",
+                database: "postgres",
+                logging: true
+            });
+        }
+        const templateId = req.params.id;
+        const { status } = req.body;
+
+        if (!templateId || !status) {
+            return res.status(400).json({ error: "ID do template e status são obrigatórios." });
+        }
+
+        const connection = await connectionPromise;
+
+        const queryResult = await connection.query(
+            "UPDATE beaba.templates SET status = $1 WHERE id = $2",
+            [status, templateId]
+        );
+
+        res.status(200).json({ message: "Status do template atualizado com sucesso." });
+    } catch (error) {
+        console.error("Erro ao atualizar status do template: ", error);
+        res.status(500).json({ error: "Erro ao processar a solicitação." });
+    }
+});
+
+app.get("/templates/ativos", async (req, res) => {
+    try {
+        if (!connectionPromise) {
+            connectionPromise = await createConnection({
+                type: "postgres",
+                host: "localhost",
+                port: 5432,
+                username: "postgres",
+                password: "880708",
+                database: "postgres",
+                logging: true
+            });
+        }
+        const connection = await connectionPromise;
+
+        const queryResult = await connection.query(`
+        SELECT
+            t.*,
+            COALESCE(SUM(c.quantidade_campos), 0) AS total_campos
+        FROM
+            beaba.templates t
+        LEFT JOIN
+            (SELECT idtemplate, COUNT(id) AS quantidade_campos FROM beaba.campos GROUP BY idtemplate) c
+        ON
+            t.id = c.idtemplate
+        WHERE
+            t.status = $1
+        GROUP BY
+            t.id
+    `, ['ativo']);
+        res.json(queryResult);
+    } catch (error) {
+        console.error("Erro ao obter templates: ", error);
+        res.status(500).json({ error: "Erro ao processar a solicitação" });
+    }
+});
+
+app.get("/templates/:id/campos", async (req, res) => {
+    try {
+        const templateId = req.params.id;
+        
+        if (!templateId) {
+            return res.status(400).json({ error: "ID do template é obrigatório." });
+        }
+
+        if (!connectionPromise) {
+            connectionPromise = await createConnection({
+                type: "postgres",
+                host: "localhost",
+                port: 5432,
+                username: "postgres",
+                password: "880708",
+                database: "postgres",
+                logging: true
+            });
+        }
+        
+        const connection = await connectionPromise;
+
+        const queryResult = await connection.query(`
+            SELECT * FROM beaba.campos WHERE idtemplate = $1
+        `, [templateId]);
+
+        res.json(queryResult);
+    } catch (error) {
+        console.error("Erro ao obter campos do template: ", error);
+        res.status(500).json({ error: "Erro ao processar a solicitação" });
+    }
+});
+
 createConnection({
     type: "postgres",
     host: "localhost",

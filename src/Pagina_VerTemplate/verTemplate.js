@@ -1,10 +1,41 @@
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import './verTemplate.css';
 import Header from '../Header/Header';
 import Menu from '../Menu/Menu';
 import Footer from '../Footer/Footer';
 import logout from './assets/logout.png';
 
-function verTemplate() {
+function VerTemplate() {
+  const serverUrl = "http://localhost:3001";
+  const [templateData, setTemplateData] = useState(null);
+  
+  useEffect(() => { 
+    const obterDadosDoTemplate = async () => {
+      try {
+        const response = await axios.get(`${serverUrl}/templates`);
+        setTemplateData(response.data);
+      } catch (error) {
+        console.error('Erro ao obter dados do Template:', error);
+      }
+    };
+    obterDadosDoTemplate();
+  }, []);
+
+  const handleStatusChange = async (templateId, newStatus) => {
+    try {
+      await axios.put(`${serverUrl}/templates/${templateId}`, { status: newStatus });
+
+      setTemplateData((prevData) =>
+        prevData.map((template) =>
+          template.id === templateId ? { ...template, status: newStatus } : template
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar status do template:', error);
+    }
+  };
+
   return (
     <div className='verTemplate'>
         <Header />
@@ -13,6 +44,7 @@ function verTemplate() {
         <div className='verTemplate_content'>
             <h1>Ver Templates</h1>
             <div className='tabela_container'>
+              {templateData ? (
               <table className='tabela'>
                  <tbody>
                     <tr className='tabela_cabecalho'>
@@ -21,7 +53,38 @@ function verTemplate() {
                         <th>Formato</th>
                         <th>Status</th>
                     </tr>
-                    <tr>
+                    {templateData.map((template) => (
+                        <tr key={template.id}>
+                            <th>{template.nome}</th>
+                            <th>{template.total_campos}</th>
+                            <th>{template.extensao}</th>
+                            <th>
+                              <select 
+                               className='select'
+                               value={template.status}
+                               onChange={(e) => handleStatusChange(template.id, e.target.value)}>
+                                <option value='ativo'>Ativo</option>
+                                <option value='inativo'>Inativo</option>
+                              </select>
+                            </th>
+                        </tr>
+                    ))}
+                  </tbody>
+              </table>
+              ) : (
+                <p>Carregando dados dos templates</p>
+              )}
+            </div>
+            <a href='/'><img src={logout} alt='Sair' className='logout'></img></a>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+/*
+<tr>
                         <th>Template 1</th>
                         <th>5</th>
                         <th>XLSX</th>
@@ -32,37 +95,5 @@ function verTemplate() {
                             </select>
                         </th>
                     </tr>
-                    <tr>
-                        <th>Template 2</th>
-                        <th>4</th>
-                        <th>XLS</th>
-                        <th>
-                            <select className='select'>
-                              <option value='ativo'>Ativo</option>
-                              <option value='inativo'>Inativo</option>
-                            </select>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>Template 3</th>
-                        <th>6</th>
-                        <th>CSV</th>
-                        <th>
-                            <select className='select'>
-                              <option value='ativo'>Ativo</option>
-                              <option value='inativo'>Inativo</option>
-                            </select>
-                        </th>
-                    </tr>
-                 </tbody>
-              </table>
-            </div>
-            <a href='/'><img src={logout} alt='Sair' className='logout'></img></a>
-        </div>
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
-export default verTemplate;
+*/
+export default VerTemplate;
