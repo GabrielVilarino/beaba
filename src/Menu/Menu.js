@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './Menu.css';
+import './MenuAdmin.css';
 import { Link } from 'react-router-dom';
 import imagemUsuario from './assets/icone_default.png'
 import home from './assets/home.png'

@@ -85,6 +85,40 @@ function Home() {
         }
       };
 
+      const handleUpload = async (template) => {
+        try {
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = '.xlsx, .xls, .csv';
+      
+          fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+      
+            if (file) {
+              const formData = new FormData();
+              formData.append('file', file);
+              
+              try {
+                const response = await axios.post(`http://127.0.0.1:8000/upload/${template.id}`, formData);
+
+                // Verifica se a resposta tem um status de sucesso
+                if (response.data.status === 'success') {
+                    alert("Upload concluído com sucesso!");
+                } else {
+                    // Se a resposta tem um status de falha, mostra a mensagem de erro
+                    alert(`Erro no upload: ${response.data.message}`);
+                }
+              } catch (error) {
+                  console.error('Erro ao fazer upload do arquivo:', error);
+              }
+            }
+          });
+          fileInput.click();
+        } catch (error) {
+          console.error('Erro ao fazer upload do arquivo:', error);
+        }
+      };
+
     return (
         <div className='Home'>
         <div className='Home__content'>
@@ -107,7 +141,7 @@ function Home() {
                             <th>{template.extensao}</th>
                             <th>
                                 <button onClick={() => handleDownload(template)}>Download</button>
-                                <button>Upload</button>
+                                <button onClick={() => handleUpload(template)}>Upload</button>
                             </th>
                         </tr>
                     ))}
@@ -122,16 +156,5 @@ function Home() {
     );
     }
   
-/*
-<tr>
-                    <th>template1</th>
-                    <th>8</th>
-                    <th>XLSX</th>
-                    <th>
-                        <button>Download</button>
-                        <button>Upload</button>
-                    </th>
-                </tr>
-*/
 
   export default Home;

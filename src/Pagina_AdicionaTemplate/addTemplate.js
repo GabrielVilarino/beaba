@@ -55,11 +55,11 @@ function AddTemplate() {
            onChange={(e) => handleChangeCampos(e, i)}
            >
             <option value=''>Selecionar</option>
-            <option value='inteiro'>Inteiro</option>
-            <option value='decimal'>Decimal</option>
-            <option value='boolean'>Booleano</option>
-            <option value='string'>Texto</option>
-            <option value='timestamp'>Data</option>
+            <option value='int64'>Inteiro</option>
+            <option value='float64'>Decimal</option>
+            <option value='bool'>Booleano</option>
+            <option value='object'>Texto</option>
+            <option value='datetime64'>Data</option>
           </select>
         </div>
       );

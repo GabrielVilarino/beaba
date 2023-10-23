@@ -1,6 +1,9 @@
 .Footer{
     padding: 10px 0;
     background-color: #003F15;
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
 }
 
 .Footer p{
