@@ -8,12 +8,10 @@ import home from './assets/home.png'
 function Menu() {
   const [userName, setUserName] = useState('');
   const serverUrl = "http://localhost:3001";
-
+  const userID = localStorage.getItem('userID');
   useEffect(() => {
-    const userEmail = localStorage.getItem('userEmail');
-
-    if (userEmail) {
-      axios.get(serverUrl + `/usuario/nome?email=${userEmail}`)
+    if (userID) {
+      axios.get(serverUrl + `/usuario/nome?id=${userID}`)
         .then(response => {
           const nomeCompleto = response.data.nome;
           const primeiroNome = nomeCompleto.split(' ')[0];
@@ -23,7 +21,7 @@ function Menu() {
           console.error('Erro ao obter nome do usuário:', error);
         });
     }
-  }, []);
+  }, [userID]);
 
   return (
     <div className='Menu'>

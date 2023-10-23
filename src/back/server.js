@@ -40,7 +40,7 @@ app.post("/login", async (req, res) => {
         }
 
         if (senha === user[0].senha) {
-            res.json({ authenticated: true, user: { nome: user[0].nome, email: user[0].email, perfil: user[0].perfil } });
+            res.json({ authenticated: true, user: { nome: user[0].nome, email: user[0].email, perfil: user[0].perfil, id: user[0].id } });
         } else {
             res.status(401).json({ authenticated: false, error: "Credenciais inválidas." });
         }
@@ -72,11 +72,13 @@ app.get("/usuarios", async (req, res) => {
     }
 });
 
+
+
 app.get("/usuario/nome", async (req, res) => {
     try {
-        const userEmail = req.query.email;
-        if(!userEmail){
-            return res.status(400).json({ error: "O e-mail é obrigatório." });
+        const userID = req.query.id;
+        if(!userID){
+            return res.status(400).json({ error: "O id é obrigatório." });
         }
 
         if (!connectionPromise) {
@@ -91,7 +93,7 @@ app.get("/usuario/nome", async (req, res) => {
             });
         }
         const connection = await connectionPromise;
-        const queryResult = await connection.query("SELECT nome FROM beaba.usuario WHERE email = $1", [userEmail]);
+        const queryResult = await connection.query("SELECT nome FROM beaba.usuario WHERE id = $1", [userID]);
 
         if (queryResult.length === 0) {
             return res.status(404).json({ error: "Usuário não encontrado." });

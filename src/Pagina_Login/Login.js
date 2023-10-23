@@ -26,8 +26,10 @@ function Login() {
       if(response.data.authenticated){
         const {perfil} = response.data.user;
         const {email} = response.data.user;
+        const {id} = response.data.user;
 
         localStorage.setItem('userEmail', email);
+        localStorage.setItem('userID', id);
         
         switch (perfil){
           case 'admin':

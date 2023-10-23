@@ -6,6 +6,7 @@ import './Home.css';
 import logout from './assets/logout.png'
 
 function Home() {
+  const userID = localStorage.getItem('userID');
     const serverUrl = "http://localhost:3001";
     const [templateData, setTemplateData] = useState(null);
 
@@ -99,13 +100,11 @@ function Home() {
               formData.append('file', file);
               
               try {
-                const response = await axios.post(`http://127.0.0.1:8000/upload/${template.id}`, formData);
+                const response = await axios.post(`http://127.0.0.1:8000/upload/${template.id}/${userID}`, formData);
 
-                // Verifica se a resposta tem um status de sucesso
                 if (response.data.status === 'success') {
                     alert("Upload concluído com sucesso!");
                 } else {
-                    // Se a resposta tem um status de falha, mostra a mensagem de erro
                     alert(`Erro no upload: ${response.data.message}`);
                 }
               } catch (error) {

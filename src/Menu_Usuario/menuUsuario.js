@@ -8,13 +8,13 @@ import home from './assets/home.png'
 function Menu() {
 
   const [userName, setUserName] = useState('');
-  const serverUrl = "http://localhost:3001";
+  const serverUrl = "http://localhost:3001"; 
 
   useEffect(() => {
-    const userEmail = localStorage.getItem('userEmail');
+    const userID = localStorage.getItem('userID');
 
-    if (userEmail) {
-      axios.get(serverUrl + `/usuario/nome?email=${userEmail}`)
+    if (userID) {
+      axios.get(serverUrl + `/usuario/nome?id=${userID}`)
         .then(response => {
           const nomeCompleto = response.data.nome;
           const primeiroNome = nomeCompleto.split(' ')[0];
