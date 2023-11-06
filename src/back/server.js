@@ -64,7 +64,7 @@ app.get("/usuarios", async (req, res) => {
             });
         }
         const connection = await connectionPromise;
-        const queryResult = await connection.query("SELECT * FROM beaba.usuario");
+        const queryResult = await connection.query("SELECT * FROM beaba.usuario order by id asc");
         res.json(queryResult);
     } catch (error) {
         console.error("Erro ao obter usuário: ", error);
@@ -158,7 +158,7 @@ app.get("/usuario/perfil", async (req, res) => {
             });
         }
         const connection = await connectionPromise;
-        const queryResult = await connection.query("SELECT nome, email, senha, id FROM beaba.usuario WHERE email = $1", [userEmail]);
+        const queryResult = await connection.query("SELECT nome, email, senha, id, perfil FROM beaba.usuario WHERE email = $1", [userEmail]);
 
         if (queryResult.length === 0) {
             return res.status(404).json({ error: "Usuário não encontrado." });
@@ -360,15 +360,20 @@ app.get("/templates", async (req, res) => {
         const queryResult = await connection.query(`
             SELECT
                 t.*,
+                u.nome as nomeUsuario,
                 COALESCE(SUM(c.quantidade_campos), 0) AS total_campos
             FROM
                 beaba.templates t
+            JOIN
+                beaba.usuario u ON t.idusuario = u.id
             LEFT JOIN
                 (SELECT idtemplate, COUNT(id) AS quantidade_campos FROM beaba.campos GROUP BY idtemplate) c
             ON
                 t.id = c.idtemplate
             GROUP BY
-                t.id
+                t.id, u.nome
+            ORDER BY
+                id asc
         `);
         res.json(queryResult);
     } catch (error) {
@@ -440,6 +445,8 @@ app.get("/templates/ativos", async (req, res) => {
             t.status = $1
         GROUP BY
             t.id
+        ORDER BY
+            id asc
     `, ['ativo']);
         res.json(queryResult);
     } catch (error) {

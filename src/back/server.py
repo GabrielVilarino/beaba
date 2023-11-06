@@ -49,17 +49,35 @@ def verificar_arquivo(file_path, template_id):
 
         for coluna in df.columns:
             
-            if coluna not in campos_dict:   
+            if coluna not in campos_dict:
                 raise HTTPException(status_code=400, detail=f"A coluna não está presente na tabela Campos")
 
             tipo_esperado = campos_dict[coluna]
-            tipo_real = str(df[coluna].dtype)
             extensao_real = extensao
 
-            if tipo_esperado != tipo_real:
-                if tipo_esperado == 'float64' and tipo_real == 'int64':
-                    return True 
-                raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado")
+            for indice, valor in df[coluna].items():
+                
+                tipo_real = type(valor).__name__
+
+                if tipo_real == 'str':
+                    tipo_real = 'object'
+                elif tipo_real == 'int':
+                    tipo_real = 'int64'
+                elif tipo_real == 'float':
+                    tipo_real = 'float64'
+                elif tipo_real == 'datetime':
+                    tipo_real == 'Timestamp'
+                
+                print(f"Índice: {indice}, Valor: {valor}, Tipo Esperado: {tipo_esperado}, Tipo Real: {tipo_real}")
+
+                if tipo_esperado == 'Timestamp' and tipo_real == 'object':
+                    tipo_real = 'Timestamp'
+
+                if tipo_esperado != tipo_real:
+                    if tipo_esperado != 'float64' and tipo_real != 'int64':
+                        raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado")    
+                    raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado") 
+                
             if extensao_esperada != extensao_real:
                 raise HTTPException(status_code=400, detail=f"O tipo de extensao é diferente do esperado")
     except Exception as e:
@@ -97,26 +115,31 @@ async def upload_file(template_id: int, usuario_id: int,file: UploadFile = File(
         else: 
             objeto_nome = f'arquivos/{file.filename}'
             blob = bucket.blob(objeto_nome)
-            blob.upload_from_file(file.file)
-            os.remove(file_path)
 
-            caminho_completo = f'https://storage.googleapis.com/{bucket_name}/{objeto_nome}'
+            if not blob.exists():
+                blob.upload_from_file(file.file)
+                os.remove(file_path)
 
-            # Adiciona o caminho do arquivo ao banco de dados sem um modelo
-            query = text("INSERT INTO beaba.uploads (nome, path, dataUpload, idUsuario, idTemplate) VALUES "
-                         "(:nome, :path, :data_upload, :id_usuario, :id_template)")
+                caminho_completo = f'https://storage.googleapis.com/{bucket_name}/{objeto_nome}'
 
-            db.execute(query, {
-                "nome": file.filename,
-                "path": caminho_completo,
-                "data_upload": datetime.utcnow(),
-                "id_usuario": usuario_id,
-                "id_template": template_id
-            })
+                query = text("INSERT INTO beaba.uploads (nome, path, dataUpload, idUsuario, idTemplate) VALUES "
+                            "(:nome, :path, :data_upload, :id_usuario, :id_template)")
 
-            db.commit()
-            
-            return {'status': 'success', 'message': 'Arquivo armazenado e verificado com sucesso'}               
+                db.execute(query, {
+                    "nome": file.filename,
+                    "path": caminho_completo,
+                    "data_upload": datetime.utcnow(),
+                    "id_usuario": usuario_id,
+                    "id_template": template_id
+                })
+
+                db.commit()
+                
+                return {'status': 'success', 'message': 'Arquivo armazenado e verificado com sucesso'}
+
+            else:
+                os.remove(file_path)
+                return {'status': 'failure', 'message': 'Já existe um arquivo com esse nome!'}      
         
     except HTTPException as e:
         raise e
@@ -136,18 +159,15 @@ async def get_uploads():
                 u.nome,
                 u.path,
                 u.dataupload,
-                u.idusuario,
-                u.idtemplate,
                 us.nome as nomeusuario,
-                t.extensao
+                t.extensao,
+                t.status
             FROM
                 beaba.uploads u
             JOIN
                 beaba.usuario us ON u.idusuario = us.id
             JOIN
                 beaba.templates t ON u.idtemplate = t.id
-            JOIN
-                beaba.usuario us2 ON t.id = us2.id
         """)
         result = db.execute(query).fetchall()
 
@@ -157,10 +177,9 @@ async def get_uploads():
                 "nome": row[1],
                 "path": row[2],
                 "dataUpload": row[3],
-                "idUsuario": row[4],
-                "idTemplate": row[5],
-                "nomeUsuario": row[6],
-                "extensao": row[7]
+                "nomeUsuario": row[4],
+                "extensao": row[5],
+                "status": row[6]
             }
             for row in result
         ]
@@ -172,4 +191,3 @@ async def get_uploads():
         raise HTTPException(status_code=500, detail="Erro interno no servidor")
     finally:
         db.close()
-        

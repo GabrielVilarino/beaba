@@ -37,6 +37,12 @@ function Dashboard() {
     return dataUTC.toLocaleDateString("pt-BR", opcoes);
   }
 
+  function formatarNomeUsuario(nomeCompleto){
+    let partes = nomeCompleto.split(' ');
+    let nome = partes.slice(0, 2).join(' ');
+    return nome;
+  }
+
   return (
     <div className='dashboard'>
         <Header />
@@ -51,16 +57,18 @@ function Dashboard() {
                     <tr className='tabela_cabecalho'>
                         <th>Nome do Arquivo</th>
                         <th>Usuário</th>
+                        <th>Squad</th>
                         <th>Data de Upload</th>
-                        <th>Formato</th>
+                        <th>Template</th>
                         <th>Ação</th>
                     </tr>
                     {dashboardData.map((dashboard) => (
                         <tr key={dashboard.id}>
                             <th>{dashboard.nome}</th>
-                            <th>{dashboard.nomeUsuario}</th>
+                            <th>{formatarNomeUsuario(dashboard.nomeUsuario)}</th>
+                            <th>Ainda Fazer</th>
                             <th>{formatarData(dashboard.dataUpload, "America/Sao_Paulo")}</th>
-                            <th>{dashboard.extensao}</th>
+                            <th>{dashboard.status}</th>
                             <th>
                               <a href={dashboard.path} download>
                                   <button>Download</button>

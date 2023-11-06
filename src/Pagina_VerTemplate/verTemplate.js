@@ -36,6 +36,12 @@ function VerTemplate() {
     }
   };
 
+  function formatarNomeUsuario(nomeCompleto){
+    let partes = nomeCompleto.split(' ');
+    let nome = partes.slice(0, 2).join(' ');
+    return nome;
+  }
+
   return (
     <div className='verTemplate'>
         <Header />
@@ -49,6 +55,8 @@ function VerTemplate() {
                  <tbody>
                     <tr className='tabela_cabecalho'>
                         <th>Nome do Template</th>
+                        <th>Criador</th>
+                        <th>Squad</th>
                         <th>Campos</th>
                         <th>Formato</th>
                         <th>Status</th>
@@ -56,6 +64,8 @@ function VerTemplate() {
                     {templateData.map((template) => (
                         <tr key={template.id}>
                             <th>{template.nome}</th>
+                            <th>{formatarNomeUsuario(template.nomeusuario)}</th>
+                            <th>Ainda fazer</th>
                             <th>{template.total_campos}</th>
                             <th>{template.extensao}</th>
                             <th>

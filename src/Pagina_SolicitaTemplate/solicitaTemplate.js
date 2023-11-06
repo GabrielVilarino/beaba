@@ -84,18 +84,33 @@ function SolicitaTemplate() {
   }
 
   const enviarEmail = async () => {
-    try {
 
+    if(cadTemplate.nome === '' || cadTemplate.extensao === '' || numColunas <= 0 || numColunas === undefined){
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    for (let i = 0; i < numColunas; i++) {
+      let nomeCampo = camposTemplate[i].nomeColuna;
+      let tipoCampo = camposTemplate[i].tipoCampo;
+      if(nomeCampo === '' || tipoCampo === undefined || nomeCampo === undefined || tipoCampo === ''){
+        alert('Preencha todos os campos');
+        return;
+      }
+    }
+    try {
       const serviceId = 'service_htunprj';
       const templateId = 'template_2t5z8f2';
       const userId = 'WX2m4Agv7BDZUXQV3';
 
       const templateParams = {
         to_email: 'gabriel_vilarino@hotmail.com',
+        from_name: userName,
         nome_template: cadTemplate.nome,
+        numero_campos: numColunas,
         extensao: cadTemplate.extensao,
         campos: JSON.stringify(camposTemplate),
-        from_name: userName
+        
       };
       alert(JSON.stringify(templateParams));
       await emailjs.send(serviceId, templateId, templateParams, userId);

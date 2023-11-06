@@ -135,6 +135,7 @@ function Pagina_HomeUsuario() {
                 <tbody>
                     <tr className='HomeUsuario__tabela_cabecalho'>
                         <th>Nome do Template</th>
+                        <th>Squad</th>
                         <th>Campos</th>
                         <th>Formato</th>
                         <th>Ações</th>
@@ -142,6 +143,7 @@ function Pagina_HomeUsuario() {
                     {templateData.map((template) => (
                         <tr key={template.id}>
                             <th>{template.nome}</th>
+                            <th>Ainda Fazer</th>
                             <th>{template.total_campos}</th>
                             <th>{template.extensao}</th>
                             <th>

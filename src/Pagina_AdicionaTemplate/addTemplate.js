@@ -59,7 +59,7 @@ function AddTemplate() {
             <option value='float64'>Decimal</option>
             <option value='bool'>Booleano</option>
             <option value='object'>Texto</option>
-            <option value='datetime64'>Data</option>
+            <option value='Timestamp'>Data</option>
           </select>
         </div>
       );
@@ -70,9 +70,21 @@ function AddTemplate() {
   const addTemplate = async (e) => {
     e.preventDefault();
     var idTemplate;
-    if(cadTemplate.nome === '' || cadTemplate.extensao === ''){
+    
+    if(cadTemplate.nome === '' || cadTemplate.extensao === '' || numColunas <= 0 || numColunas === undefined){
       alert("Preencha todos os campos!");
+      return;
     }
+
+    for (let i = 0; i < numColunas; i++) {
+      let nomeCampo = camposTemplate[i].nomeColuna;
+      let tipoCampo = camposTemplate[i].tipoCampo;
+      if(nomeCampo === '' || tipoCampo === undefined || nomeCampo === undefined || tipoCampo === ''){
+        alert('Preencha todos os campos');
+        return;
+      }
+    }
+    
     //POST de template
     try{
       const response = await axios.post(serverUrl + '/template/cadastro', {
@@ -95,10 +107,6 @@ function AddTemplate() {
     }
 
     //POST campos
-
-    if(camposTemplate.nomeColuna === '' || camposTemplate.tipoCampo === ''){
-      alert("Preencha todos os campos!");
-    }
 
     for (let i = 0; i < numColunas; i++) {
       let nomeCampo = camposTemplate[i].nomeColuna;

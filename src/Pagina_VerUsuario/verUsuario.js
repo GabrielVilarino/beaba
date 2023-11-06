@@ -55,6 +55,7 @@ function VerUsuario() {
                     <tr className='tabela_cabecalho'>
                         <th>Nome Completo</th>
                         <th>E-mail</th>
+                        <th>Squad</th>
                         <th>Perfil</th>
                         <th>Ações</th>
                     </tr>
@@ -62,6 +63,7 @@ function VerUsuario() {
                         <tr key={user.id}>
                             <th>{user.nome}</th>
                             <th>{user.email}</th>
+                            <th>Ainda Fazer</th>
                             <th>{user.perfil === 'admin' ? 'Administrador' : 'Usuário'}</th>
                             <th>
                                 <button onClick={(e) => atualizaPerfilAdmin(e, user.email)}>Administrador</button>
