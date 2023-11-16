@@ -1,3 +1,4 @@
+import React from 'react';
 import './Pagina_Home.css';
 import Header from '../Header/Header';
 import Menu from '../Menu/Menu';

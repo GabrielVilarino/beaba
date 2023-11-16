@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Path
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import storage
 import pandas as pd
@@ -26,6 +26,29 @@ app.add_middleware(
 DATABASE_URL = "postgresql+psycopg2://postgres:880708@localhost/postgres"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def converter_para_numero(valor):
+    try:
+        int(valor)
+        return 'int64'
+    except ValueError:
+        try:
+            float(valor)
+            return 'float64'
+        except ValueError:
+            return 'object'
+
+def verifica_data_csv(data):
+    formatos = ["%d/%m/%Y", "%d/%m/%y"]  # Adicione mais formatos se necessário
+
+    for data_formato in formatos:
+        try:
+            datetime.strptime(data, data_formato)
+            return True
+        except ValueError:
+            pass
+
+    return False
 
 def verificar_arquivo(file_path, template_id):
     extensao = file_path.split('.')[-1].lower()
@@ -65,18 +88,100 @@ def verificar_arquivo(file_path, template_id):
                     tipo_real = 'int64'
                 elif tipo_real == 'float':
                     tipo_real = 'float64'
-                elif tipo_real == 'datetime':
-                    tipo_real == 'Timestamp'
+
+                if extensao_real == 'xls' and tipo_esperado == 'datetime64':
+                    tipo_esperado = 'datetime'
+                elif extensao_real == 'xlsx' and tipo_real == 'datetime':
+                    tipo_real = 'Timestamp'
+                elif extensao_real == 'xls' and tipo_real == 'datetime':
+                    tipo_real = 'Timestamp'
+
+                if extensao_real == 'xls' and tipo_esperado == 'bool':
+                    if valor == 'TRUE' or valor == 'True' or valor == 'true':
+                        tipo_real = 'bool'
+                    elif valor == 'FALSE' or valor == 'False' or valor == 'false':
+                        tipo_real = 'bool'
+                elif extensao_real == 'xlsx' and tipo_esperado == 'bool':
+                    if valor == 'TRUE' or valor == 'True' or valor == 'true':
+                        tipo_real = 'bool'
+                    elif valor == 'FALSE' or valor == 'False' or valor == 'false':
+                        tipo_real = 'bool'
+
+                if extensao_real == 'csv' and tipo_esperado == 'object':
+                    if converter_para_numero(valor) == 'int64':
+                        tipo_real = 'int64'
+                    elif converter_para_numero(valor) == 'float64':
+                        tipo_real = 'float64'
+                    elif verifica_data_csv(valor) == True:
+                        tipo_real = 'Timestamp'
+                    elif valor == 'TRUE' or valor == 'True' or valor == 'true':
+                        tipo_real = 'bool'
+                    elif valor == 'FALSE' or valor == 'False' or valor == 'false':
+                        tipo_real = 'bool'
+
+                if extensao_real == 'csv' and tipo_esperado == 'int64':
+                    if converter_para_numero(valor) == 'int64':
+                        tipo_real = 'int64'
+                    elif converter_para_numero(valor) == 'float64':
+                        tipo_real = 'float64'
+                    elif verifica_data_csv(valor) == True:
+                        tipo_real = 'Timestamp'
+                    elif valor == 'TRUE' or valor == 'True' or valor == 'true':
+                        tipo_real = 'bool'
+                    elif valor == 'FALSE' or valor == 'False' or valor == 'false':
+                        tipo_real = 'bool'
+                    else:
+                        tipo_real = 'object'
+
+                if extensao_real == 'csv' and tipo_esperado == 'float64':
+                    if converter_para_numero(valor) == 'int64':
+                        tipo_real = 'int64'
+                    elif converter_para_numero(valor) == 'float64':
+                        tipo_real = 'float64'
+                    elif verifica_data_csv(valor) == True:
+                        tipo_real = 'Timestamp'
+                    elif valor == 'TRUE' or valor == 'True' or valor == 'true':
+                        tipo_real = 'bool'
+                    elif valor == 'FALSE' or valor == 'False' or valor == 'false':
+                        tipo_real = 'bool'
+                    else:
+                        tipo_real = 'object'
+
+                if extensao_real == 'csv' and tipo_esperado == 'Timestamp':
+                    if converter_para_numero(valor) == 'int64':
+                        tipo_real = 'int64'
+                    elif converter_para_numero(valor) == 'float64':
+                        tipo_real = 'float64'
+                    elif verifica_data_csv(valor) == True:
+                        tipo_real = 'Timestamp'
+                    elif valor == 'TRUE' or valor == 'True' or valor == 'true':
+                        tipo_real = 'bool'
+                    elif valor == 'FALSE' or valor == 'False' or valor == 'false':
+                        tipo_real = 'bool'
+                    else:
+                        tipo_real = 'object'
+
+                if extensao_real == 'csv' and tipo_esperado == 'bool':
+                    if converter_para_numero(valor) == 'int64':
+                        tipo_real = 'int64'
+                    elif converter_para_numero(valor) == 'float64':
+                        tipo_real = 'float64'
+                    elif verifica_data_csv(valor) == True:
+                        tipo_real = 'Timestamp'
+                    elif valor == 'TRUE' or valor == 'True' or valor == 'true':
+                        tipo_real = 'bool'
+                    elif valor == 'FALSE' or valor == 'False' or valor == 'false':
+                        tipo_real = 'bool'
+                    else:
+                        tipo_real = 'object'
                 
                 print(f"Índice: {indice}, Valor: {valor}, Tipo Esperado: {tipo_esperado}, Tipo Real: {tipo_real}")
 
-                if tipo_esperado == 'Timestamp' and tipo_real == 'object':
-                    tipo_real = 'Timestamp'
-
                 if tipo_esperado != tipo_real:
-                    if tipo_esperado != 'float64' and tipo_real != 'int64':
-                        raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado")    
-                    raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado") 
+                    if tipo_esperado != 'float64' and tipo_real != 'int64': 
+                        raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado")
+                    raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado")
+                     
                 
             if extensao_esperada != extensao_real:
                 raise HTTPException(status_code=400, detail=f"O tipo de extensao é diferente do esperado")
@@ -88,6 +193,27 @@ def verificar_arquivo(file_path, template_id):
         db.close()
 
     return True
+
+def nome_squad(db, usuario_id):
+    query = text("SELECT s.nome FROM beaba.squad s JOIN beaba.usuario us ON us.idSquad = s.id WHERE us.id = :usuario_id")
+    squad_nome = db.execute(query, {"usuario_id": usuario_id}).fetchone()
+    return squad_nome[0] if squad_nome else None
+
+def criar_pasta_squad(bucket, squad_nome):
+    pasta_squad = f'arquivos/{squad_nome}/'
+    blob = bucket.blob(pasta_squad)
+
+    if not blob.exists():
+        blob.upload_from_string('')
+        return True
+    else:
+        return False
+
+def verificar_pasta_squad_existe(bucket, squad_nome):
+    pasta_squad = f'arquivos/{squad_nome}/'
+    blob = bucket.blob(pasta_squad)
+
+    return blob.exists()
 
 # Configurar o logger
 logging.basicConfig(level=logging.DEBUG)
@@ -112,8 +238,12 @@ async def upload_file(template_id: int, usuario_id: int,file: UploadFile = File(
         if not verificar_arquivo(file_path, template_id):
             os.remove(file_path)
             return {'status': 'failure', 'message': 'O arquivo não condiz com o template fornecido!'}
-        else: 
-            objeto_nome = f'arquivos/{file.filename}'
+        else:
+            nome_da_squad = nome_squad(db, usuario_id)
+            if not verificar_pasta_squad_existe(bucket, nome_da_squad):
+                criar_pasta_squad(bucket, nome_da_squad)
+
+            objeto_nome = f'arquivos/{nome_da_squad}/{file.filename}'
             blob = bucket.blob(objeto_nome)
 
             if not blob.exists():
@@ -161,13 +291,18 @@ async def get_uploads():
                 u.dataupload,
                 us.nome as nomeusuario,
                 t.extensao,
-                t.status
+                t.status,
+                s.nome as nomesquad
             FROM
                 beaba.uploads u
             JOIN
                 beaba.usuario us ON u.idusuario = us.id
             JOIN
                 beaba.templates t ON u.idtemplate = t.id
+            JOIN
+                beaba.squad s
+            ON
+                us.idSquad = s.id
         """)
         result = db.execute(query).fetchall()
 
@@ -179,7 +314,55 @@ async def get_uploads():
                 "dataUpload": row[3],
                 "nomeUsuario": row[4],
                 "extensao": row[5],
-                "status": row[6]
+                "status": row[6],
+                "nomeSquad": row[7]
+            }
+            for row in result
+        ]
+
+        return uploads
+
+    except Exception as e:
+        logging.exception("Erro ao recuperar uploads do banco de dados")
+        raise HTTPException(status_code=500, detail="Erro interno no servidor")
+    finally:
+        db.close()
+
+@app.get("/usuario/uploads/{userID}")
+async def get_usuario_uploads(userID: int = Path(..., title="ID do Usuário")):
+    db = SessionLocal()
+    try:
+        query = text("""
+            SELECT
+                u.id,
+                u.nome,
+                u.path,
+                u.dataupload,
+                t.extensao,
+                t.status
+            FROM
+                beaba.uploads u
+            JOIN
+                beaba.usuario us 
+            ON 
+                u.idusuario = us.id
+            JOIN
+                beaba.templates t 
+            ON 
+                u.idtemplate = t.id
+            WHERE
+                us.id = :userID
+        """)
+        result = db.execute(query, {"userID": userID}).fetchall()
+
+        uploads = [
+            {
+                "id": row[0],
+                "nome": row[1],
+                "path": row[2],
+                "dataUpload": row[3],
+                "extensao": row[4],
+                "status": row[5]
             }
             for row in result
         ]

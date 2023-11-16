@@ -7,7 +7,7 @@ import Footer from '../Footer/Footer';
 import logout from './assets/logout.png';
 
 function AddTemplate() {
-  const serverUrl = "http://localhost:3001";
+  const serverUrl = 'http://localhost:3001';
   const userEmail = localStorage.getItem('userEmail');
   const [numColunas, setNumColunas] = useState(1);
   const [cadTemplate, setCadTemplate] = useState({
@@ -16,8 +16,8 @@ function AddTemplate() {
   });
   const [camposTemplate, setCamposTemplate] = useState([]);
 
-  var userID = useRef(null);
-  useEffect(() => { 
+  let userID = useRef(null);
+  useEffect(() => {
     const obterIdDoUsuario = async () => {
       try {
         const response = await axios.get(`${serverUrl}/usuario/perfil?email=${userEmail}`);
@@ -33,27 +33,26 @@ function AddTemplate() {
     }
   }, [userEmail]);
 
-  function addCampos(){
+  function addCampos() {
     const colunas = [];
     for (let i = 0; i < numColunas; i++) {
       colunas.push(
         <div key={i} className='content-1'>
           <label htmlFor={`nomeColuna${i}`}>Nome da Coluna: </label>
           <input
-           type='text'
+            type='text'
             id={`nomeColuna${i}`}
-            name='nomeColuna' 
-            value={camposTemplate[i]?.nomeColuna || ''} 
+            name='nomeColuna'
+            value={camposTemplate[i]?.nomeColuna || ''}
             onChange={(e) => handleChangeCampos(e, i)}/>
-            <br></br>
+          <br></br>
           <label htmlFor={`tipoCampo${i}`}>Tipo do Campo: </label>
-          <select 
-           id={`tipoCampo${i}`} 
-           className='tipoCampo' 
-           name='tipoCampo' 
-           value={camposTemplate[i]?.tipoCampo || ''} 
-           onChange={(e) => handleChangeCampos(e, i)}
-           >
+          <select
+            id={`tipoCampo${i}`}
+            className='tipoCampo'
+            name='tipoCampo'
+            value={camposTemplate[i]?.tipoCampo || ''}
+            onChange={(e) => handleChangeCampos(e, i)}>
             <option value=''>Selecionar</option>
             <option value='int64'>Inteiro</option>
             <option value='float64'>Decimal</option>
@@ -69,22 +68,22 @@ function AddTemplate() {
 
   const addTemplate = async (e) => {
     e.preventDefault();
-    var idTemplate;
-    
-    if(cadTemplate.nome === '' || cadTemplate.extensao === '' || numColunas <= 0 || numColunas === undefined){
-      alert("Preencha todos os campos!");
+    let idTemplate;
+
+    if(cadTemplate.nome === '' || cadTemplate.extensao === '' || numColunas <= 0 || numColunas === undefined) {
+      alert('Preencha todos os campos!');
       return;
     }
 
     for (let i = 0; i < numColunas; i++) {
       let nomeCampo = camposTemplate[i].nomeColuna;
       let tipoCampo = camposTemplate[i].tipoCampo;
-      if(nomeCampo === '' || tipoCampo === undefined || nomeCampo === undefined || tipoCampo === ''){
+      if(nomeCampo === '' || tipoCampo === undefined || nomeCampo === undefined || tipoCampo === '') {
         alert('Preencha todos os campos');
         return;
       }
     }
-    
+
     //POST de template
     try{
       const response = await axios.post(serverUrl + '/template/cadastro', {
@@ -93,7 +92,7 @@ function AddTemplate() {
         idUsuario: userID.current
       });
 
-      if(response.status === 200){
+      if(response.status === 200) {
         alert('Template cadastrado com sucesso');
         idTemplate = response.data.id.id;
         setCadTemplate({
@@ -102,7 +101,7 @@ function AddTemplate() {
         });
       }
 
-    }catch(error){
+    }catch(error) {
       console.error('Erro ao cadastrar template: ', error);
     }
 
@@ -111,7 +110,7 @@ function AddTemplate() {
     for (let i = 0; i < numColunas; i++) {
       let nomeCampo = camposTemplate[i].nomeColuna;
       let tipoCampo = camposTemplate[i].tipoCampo;
-      console.log("Dados a serem enviados:", { nome: nomeCampo, tipo: tipoCampo, idTemplate: idTemplate });
+      console.log('Dados a serem enviados:', { nome: nomeCampo, tipo: tipoCampo, idTemplate: idTemplate });
 
       try{
         const response = await axios.post(serverUrl + '/template/cadastro/campos', {
@@ -119,12 +118,12 @@ function AddTemplate() {
           tipo: tipoCampo,
           idTemplate: idTemplate
         });
-  
-        if(response.status === 200){
+
+        if(response.status === 200) {
           setCamposTemplate([]);
         }
-  
-      }catch(error){
+
+      }catch(error) {
         console.error('Erro ao cadastrar campos: ', error);
       }
     }
@@ -138,7 +137,7 @@ function AddTemplate() {
       [e.target.name]: e.target.value,
     });
   };
-  
+
   function handleChangeCampos(e, index) {
     const { name, value } = e.target;
     setCamposTemplate((prevCampos) => {
@@ -153,35 +152,35 @@ function AddTemplate() {
 
   return (
     <div className='addTemplate'>
-        <Header />
+      <Header />
       <div className='addTemplate__container'>
         <Menu />
         <div className='addTemplate_content'>
-            <h1>Adicionar Template</h1>
-            <div className='content-1-container'>
-              <div className='content-1-fixo'>
-                  <label htmlFor='nomeTemplate'>Nome do Template: </label>
-                  <input type='text' name='nome' value={cadTemplate.nome} onChange={handleChange}></input>
-              </div>
-              {addCampos()}
+          <h1>Adicionar Template</h1>
+          <div className='content-1-container'>
+            <div className='content-1-fixo'>
+              <label htmlFor='nomeTemplate'>Nome do Template: </label>
+              <input type='text' name='nome' value={cadTemplate.nome} onChange={handleChange}></input>
             </div>
+            {addCampos()}
+          </div>
         </div>
         <div className='content-2'>
-              <div className='content-2-container'>
-                <select name='extensao' onChange={handleChange} value={cadTemplate.extensao}>
-                <option value=''>Selecionar</option>
-                  <option value='csv'>CSV</option>
-                  <option value='xls'>XLS</option>
-                  <option value='xlsx'>XLSX</option>
-                </select>
-                <input
-                 type='number'
-                 placeholder='Digite o Número de Colunas'
-                 value={numColunas}
-                 min={1}
-                 onChange={(e) => setNumColunas(e.target.value)}></input>
-                  <button onClick={addTemplate}>Adicionar</button>
-              </div>
+          <div className='content-2-container'>
+            <select name='extensao' onChange={handleChange} value={cadTemplate.extensao}>
+              <option value=''>Selecionar</option>
+              <option value='csv'>CSV</option>
+              <option value='xls'>XLS</option>
+              <option value='xlsx'>XLSX</option>
+            </select>
+            <input
+              type='number'
+              placeholder='Digite o Número de Colunas'
+              value={numColunas}
+              min={1}
+              onChange={(e) => setNumColunas(e.target.value)}></input>
+            <button onClick={addTemplate}>Adicionar</button>
+          </div>
         </div>
         <a href='/'><img src={logout} alt='Sair' className='logout'></img></a>
       </div>

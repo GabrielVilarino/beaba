@@ -7,7 +7,7 @@ import Footer from '../Footer/Footer';
 import foto from './assets/Foto.png';
 
 function Login() {
-  const serverUrl = "http://localhost:3001";
+  const serverUrl = 'http://localhost:3001';
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
@@ -23,26 +23,31 @@ function Login() {
         senha: formData.senha,
       });
 
-      if(response.data.authenticated){
+      if(response.data.authenticated) {
         const {perfil} = response.data.user;
         const {email} = response.data.user;
         const {id} = response.data.user;
+        const {idsquad} = response.data.user;
 
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userID', id);
-        
-        switch (perfil){
-          case 'admin':
-            navigate('/home');
-            break;
-          case 'user':
-            navigate('/homeUsuario');
-            break;
-          default:
-            navigate('/');
+        localStorage.setItem('userIDSquad', idsquad);
+
+        switch (perfil) {
+
+        case 'admin':
+          navigate('/home');
+          break;
+
+        case 'user':
+          navigate('/homeUsuario');
+          break;
+
+        default:
+          navigate('/');
         }
       }
-    }catch(error){
+    }catch(error) {
       const errorMessage = error.response.data.error;
       alert(errorMessage);
     }
@@ -55,7 +60,7 @@ function Login() {
     });
   };
 
-    return (
+  return (
     <div className='Login'>
       <Header />
       <div className='Pagina_Login__container'>

@@ -15,42 +15,53 @@ function SolicitaTemplate() {
   });
   const [camposTemplate, setCamposTemplate] = useState([]);
   const [userName, setUserName] = useState('');
+  const [userAdminData, setUserAdminData] = useState('');
   const userID = localStorage.getItem('userID');
-  const serverUrl = "http://localhost:3001";
-  useEffect(() => { 
+  const userIDSquad = localStorage.getItem('userIDSquad');
+  const serverUrl = 'http://localhost:3001';
+  useEffect(() => {
     const obterNomeDoUsuario = async () => {
       try {
         const response = await axios.get(`${serverUrl}/usuario/nome?id=${userID}`);
-        setUserName(JSON.stringify(response.data.nome));
+        setUserName(response.data.nome);
       } catch (error) {
         console.error('Erro ao obter ID do usuário:', error);
       }
     };
 
+    const obterEmailDoAdmin = async () => {
+      try {
+        const response = await axios.get(`${serverUrl}/admin/email?idsquad=${userIDSquad}`);
+        setUserAdminData(response.data);
+      } catch (error) {
+        console.error('Erro ao obter Squad do usuário:', error);
+      }
+    };
+    obterEmailDoAdmin();
     obterNomeDoUsuario();
-  }, [userID]);
+  }, [userIDSquad]);
 
-  function addCampos(){
+  function addCampos() {
     const colunas = [];
     for (let i = 0; i < numColunas; i++) {
       colunas.push(
         <div key={i} className='content-1'>
           <label htmlFor={`nomeColuna${i}`}>Nome da Coluna: </label>
           <input
-           type='text'
+            type='text'
             id={`nomeColuna${i}`}
-            name='nomeColuna' 
-            value={camposTemplate[i]?.nomeColuna || ''} 
+            name='nomeColuna'
+            value={camposTemplate[i]?.nomeColuna || ''}
             onChange={(e) => handleChangeCampos(e, i)}/>
-            <br></br>
+          <br></br>
           <label htmlFor={`tipoCampo${i}`}>Tipo do Campo: </label>
-          <select 
-           id={`tipoCampo${i}`} 
-           className='tipoCampo' 
-           name='tipoCampo' 
-           value={camposTemplate[i]?.tipoCampo || ''} 
-           onChange={(e) => handleChangeCampos(e, i)}
-           >
+          <select
+            id={`tipoCampo${i}`}
+            className='tipoCampo'
+            name='tipoCampo'
+            value={camposTemplate[i]?.tipoCampo || ''}
+            onChange={(e) => handleChangeCampos(e, i)}
+          >
             <option value=''>Selecionar</option>
             <option value='int64'>Inteiro</option>
             <option value='float64'>Decimal</option>
@@ -85,15 +96,15 @@ function SolicitaTemplate() {
 
   const enviarEmail = async () => {
 
-    if(cadTemplate.nome === '' || cadTemplate.extensao === '' || numColunas <= 0 || numColunas === undefined){
-      alert("Preencha todos os campos!");
+    if(cadTemplate.nome === '' || cadTemplate.extensao === '' || numColunas <= 0 || numColunas === undefined) {
+      alert('Preencha todos os campos!');
       return;
     }
 
     for (let i = 0; i < numColunas; i++) {
       let nomeCampo = camposTemplate[i].nomeColuna;
       let tipoCampo = camposTemplate[i].tipoCampo;
-      if(nomeCampo === '' || tipoCampo === undefined || nomeCampo === undefined || tipoCampo === ''){
+      if(nomeCampo === '' || tipoCampo === undefined || nomeCampo === undefined || tipoCampo === '') {
         alert('Preencha todos os campos');
         return;
       }
@@ -104,15 +115,15 @@ function SolicitaTemplate() {
       const userId = 'WX2m4Agv7BDZUXQV3';
 
       const templateParams = {
-        to_email: 'gabriel_vilarino@hotmail.com',
+        to_email: userAdminData.email,
+        to_name: userAdminData.nome,
         from_name: userName,
         nome_template: cadTemplate.nome,
         numero_campos: numColunas,
         extensao: cadTemplate.extensao,
         campos: JSON.stringify(camposTemplate),
-        
       };
-      alert(JSON.stringify(templateParams));
+      alert(`Solicitação será enviada para o email: ${userAdminData.email}`);
       await emailjs.send(serviceId, templateId, templateParams, userId);
 
       alert('E-mail enviado com sucesso!');
@@ -129,35 +140,35 @@ function SolicitaTemplate() {
 
   return (
     <div className='solicitaTemplate'>
-        <Header />
+      <Header />
       <div className='solicitaTemplate__container'>
         <Menu />
         <div className='solicitaTemplate_content'>
-            <h1>Solicitar Template</h1>
-            <div className='content-1-container'>
-              <div className='content-1-fixo'>
-                  <label htmlFor='nomeTemplate'>Nome do Template: </label>
-                  <input type='text' name='nome' value={cadTemplate.nome} onChange={handleChange}></input>
-              </div>
-              {addCampos()}
+          <h1>Solicitar Template</h1>
+          <div className='content-1-container'>
+            <div className='content-1-fixo'>
+              <label htmlFor='nomeTemplate'>Nome do Template: </label>
+              <input type='text' name='nome' value={cadTemplate.nome} onChange={handleChange}></input>
             </div>
+            {addCampos()}
+          </div>
         </div>
         <div className='content-2'>
-              <div className='content-2-container'>
-                <select name='extensao' onChange={handleChange} value={cadTemplate.extensao}>
-                  <option value=''>Selecionar</option>
-                    <option value='csv'>CSV</option>
-                    <option value='xls'>XLS</option>
-                    <option value='xlsx'>XLSX</option>
-                  </select>
-                  <input
-                  type='number'
-                  placeholder='Digite o Número de Colunas'
-                  value={numColunas}
-                  min={1}
-                  onChange={(e) => setNumColunas(e.target.value)}></input>
-                    <button onClick={enviarEmail}>Solicitar</button>
-              </div>
+          <div className='content-2-container'>
+            <select name='extensao' onChange={handleChange} value={cadTemplate.extensao}>
+              <option value=''>Selecionar</option>
+              <option value='csv'>CSV</option>
+              <option value='xls'>XLS</option>
+              <option value='xlsx'>XLSX</option>
+            </select>
+            <input
+              type='number'
+              placeholder='Digite o Número de Colunas'
+              value={numColunas}
+              min={1}
+              onChange={(e) => setNumColunas(e.target.value)}></input>
+            <button onClick={enviarEmail}>Solicitar</button>
+          </div>
         </div>
         <a href='/'><img src={logout} alt='Sair' className='logout'></img></a>
       </div>

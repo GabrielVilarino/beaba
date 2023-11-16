@@ -17,7 +17,7 @@
 }
 
 .HomeUsuario__tabela_container{
-    max-height: 290px;
+    max-height: 370px;
     overflow: auto;
     margin-right: 10px;
 }
@@ -54,6 +54,11 @@ border-radius: 5px; /* Borda arredondada do thumb */
 .HomeUsuario__tabela th{
     color: #016823;
     font-size: 23px;
+}
+
+.HomeUsuario__tabela th:first-child{
+    text-align: left;
+    padding-left: 10px;
 }
 
 .HomeUsuario__tabela_cabecalho th{

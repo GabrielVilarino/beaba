@@ -8,15 +8,15 @@ import icone from './assets/iconePerfil.png';
 import logout from './assets/logout.png';
 
 function EditarPerfil() {
-  const serverUrl = "http://localhost:3001";
+  const serverUrl = 'http://localhost:3001';
   const userEmail = localStorage.getItem('userEmail');
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
     senha: ''
   });
-  var userID = useRef(null);
-  useEffect(() => { 
+  let userID = useRef(null);
+  useEffect(() => {
     const obterDadosDoUsuario = async () => {
       try {
         const response = await axios.get(`${serverUrl}/usuario/perfil?email=${userEmail}`);
@@ -58,29 +58,29 @@ function EditarPerfil() {
 
   return (
     <div className='editarPerfil'>
-        <Header />
+      <Header />
       <div className='editarPerfil__container'>
         <Menu />
         <div className='editarPerfil_content'>
-            <h1>Editar Perfil</h1>
-            <img src={icone} alt='Foto Perfil' className='fotoPerfil'></img>
-            <button className='buttonEditaFoto'>Editar Foto</button>
-            <form className='formGrup' onSubmit={handleSave}>
-                <div>
-                    <label htmlFor='nome'>Nome:</label>
-                    <input type='text' defaultValue={formData.nome} onChange={handleInputChange} name='nome'></input>
-                </div>
-                <div>
-                    <label htmlFor='email'>E-mail:</label>
-                    <input type='email' defaultValue={formData.email} onChange={handleInputChange} name='email'></input>
-                </div>
-                <div>
-                    <label htmlFor='senha'>Senha:</label>
-                    <input type='password' defaultValue={formData.senha} onChange={handleInputChange} name='senha'></input>
-                </div>
-                <button className='buttonSalvar'>Salvar</button>  
-            </form>
-            <a href='/'><img src={logout} alt='Sair' className='logout'></img></a>
+          <h1>Editar Perfil</h1>
+          <img src={icone} alt='Foto Perfil' className='fotoPerfil'></img>
+          <button className='buttonEditaFoto'>Editar Foto</button>
+          <form className='formGrup' onSubmit={handleSave}>
+            <div>
+              <label htmlFor='nome'>Nome:</label>
+              <input type='text' defaultValue={formData.nome} onChange={handleInputChange} name='nome'></input>
+            </div>
+            <div>
+              <label htmlFor='email'>E-mail:</label>
+              <input type='email' defaultValue={formData.email} onChange={handleInputChange} name='email'></input>
+            </div>
+            <div>
+              <label htmlFor='senha'>Senha:</label>
+              <input type='password' defaultValue={formData.senha} onChange={handleInputChange} name='senha'></input>
+            </div>
+            <button className='buttonSalvar'>Salvar</button>
+          </form>
+          <a href='/'><img src={logout} alt='Sair' className='logout'></img></a>
         </div>
       </div>
       <Footer />

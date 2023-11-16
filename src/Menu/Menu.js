@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './MenuAdmin.css';
+import './Menu.css';
 import { Link } from 'react-router-dom';
-import imagemUsuario from './assets/icone_default.png'
-import home from './assets/home.png'
+import imagemUsuario from './assets/icone_default.png';
+import home from './assets/home.png';
 
 function Menu() {
   const [userName, setUserName] = useState('');
-  const serverUrl = "http://localhost:3001";
+  const serverUrl = 'http://localhost:3001';
   const userID = localStorage.getItem('userID');
   useEffect(() => {
     if (userID) {
@@ -24,29 +24,30 @@ function Menu() {
   }, [userID]);
 
   return (
-    <div className='Menu'>
-      <div className="Menu__perfil">
+    <div className='MenuAdmin'>
+      <div className='Menu__perfilAdmin'>
         <img src={imagemUsuario} alt='Imagem Usuario'></img>
-          <div className='Menu__perfil_content'>
-            <p>Administrador</p>
-            <h5>{userName}</h5>
-          </div>
+        <div className='Menu__perfilAdmin_content'>
+          <p>Administrador</p>
+          <h5>{userName}</h5>
+        </div>
       </div>
-      <div className="Menu__nav">
-          <nav>
-            <ul>
-              <li><Link to='/editarPerfil'>Editar Perfil</Link></li>
-              <li><Link to='/adicionaUsuario'>Adicionar Usuário</Link></li>
-              <li><Link to='/adicionaTemplate'>Adicionar Template</Link></li>
-              <li><Link to='/verUsuario'>Ver Usuário</Link></li>
-              <li><Link to='/verTemplate'>Ver Template</Link></li>
-              <li><Link to='/dashboard'>DashBoard</Link></li>
-            </ul>
-          </nav>
+      <div className='Menu__navAdmin'>
+        <nav>
+          <ul>
+            <li><Link to='/editarPerfil'>Editar Perfil</Link></li>
+            <li><Link to='/adicionaUsuario'>Adicionar Usuário</Link></li>
+            <li><Link to='/adicionaTemplate'>Adicionar Template</Link></li>
+            <li><Link to='/verUsuario'>Usuários</Link></li>
+            <li><Link to='/verSquads'>Squads</Link></li>
+            <li><Link to='/verTemplate'>Templates</Link></li>
+            <li><Link to='/dashboard'>DashBoard</Link></li>
+          </ul>
+        </nav>
       </div>
       <a href='/home' className='Menu__perfil_home'><img src={home} alt='Imagem Home' ></img></a>
     </div>
   );
 }
-  
-  export default Menu;
+
+export default Menu;

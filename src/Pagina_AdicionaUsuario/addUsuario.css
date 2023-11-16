@@ -95,24 +95,17 @@
   border: 1px solid #016823;
   color: #016823;
   margin-top: 20px;
+  margin-right: 20px;
 }
 
-/*
-  const navigate = useNavigate();
-
-  let email = '';
-  let password = '';
-
-  const onSubmit = (e) => {
-    email = e.target.elements.email.value;
-    password = e.target.elements.password.value;
-
-    if( email === 'gabrielvilarino@hotmail.com' && password === '1234'){
-      navigate('/home');
-    }else if(email === 'gabrielvilarino@hotmail.com' && password === '123'){
-      navigate('/homeUsuario');
-    }else{
-      console.log('erro')
-    }
-  }
-*/
+.tipoSquad{
+  width: 200px;
+  margin-left: 5px;
+  height: 40px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #016823;
+  color: #016823;
+  margin-top: 20px;
+}
