@@ -27,6 +27,10 @@ DATABASE_URL = "postgresql+psycopg2://postgres:880708@localhost/postgres"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+def is_image(filename):
+    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
 def converter_para_numero(valor):
     try:
         int(valor)
@@ -90,18 +94,18 @@ def verificar_arquivo(file_path, template_id):
                     tipo_real = 'float64'
 
                 if extensao_real == 'xls' and tipo_esperado == 'datetime64':
-                    tipo_esperado = 'datetime'
+                    tipo_esperado = 'Timestamp'
                 elif extensao_real == 'xlsx' and tipo_real == 'datetime':
                     tipo_real = 'Timestamp'
                 elif extensao_real == 'xls' and tipo_real == 'datetime':
                     tipo_real = 'Timestamp'
 
-                if extensao_real == 'xls' and tipo_esperado == 'bool':
+                if extensao_real == 'xls':
                     if valor == 'TRUE' or valor == 'True' or valor == 'true':
                         tipo_real = 'bool'
                     elif valor == 'FALSE' or valor == 'False' or valor == 'false':
                         tipo_real = 'bool'
-                elif extensao_real == 'xlsx' and tipo_esperado == 'bool':
+                elif extensao_real == 'xlsx':
                     if valor == 'TRUE' or valor == 'True' or valor == 'true':
                         tipo_real = 'bool'
                     elif valor == 'FALSE' or valor == 'False' or valor == 'false':
@@ -120,18 +124,10 @@ def verificar_arquivo(file_path, template_id):
                         tipo_real = 'bool'
 
                 if extensao_real == 'csv' and tipo_esperado == 'int64':
-                    if converter_para_numero(valor) == 'int64':
-                        tipo_real = 'int64'
-                    elif converter_para_numero(valor) == 'float64':
-                        tipo_real = 'float64'
-                    elif verifica_data_csv(valor) == True:
-                        tipo_real = 'Timestamp'
-                    elif valor == 'TRUE' or valor == 'True' or valor == 'true':
+                    if valor == 'TRUE' or valor == 'True' or valor == 'true':
                         tipo_real = 'bool'
                     elif valor == 'FALSE' or valor == 'False' or valor == 'false':
                         tipo_real = 'bool'
-                    else:
-                        tipo_real = 'object'
 
                 if extensao_real == 'csv' and tipo_esperado == 'float64':
                     if converter_para_numero(valor) == 'int64':
@@ -162,25 +158,24 @@ def verificar_arquivo(file_path, template_id):
                         tipo_real = 'object'
 
                 if extensao_real == 'csv' and tipo_esperado == 'bool':
-                    if converter_para_numero(valor) == 'int64':
+                    if valor == 'TRUE' or valor == 'True' or valor == 'true' or valor == 1:
+                        tipo_real = 'bool'
+                    elif valor == 'FALSE' or valor == 'False' or valor == 'false' or valor == 0:
+                        tipo_real = 'bool'
+                    elif converter_para_numero(valor) == 'int64':
                         tipo_real = 'int64'
                     elif converter_para_numero(valor) == 'float64':
                         tipo_real = 'float64'
                     elif verifica_data_csv(valor) == True:
                         tipo_real = 'Timestamp'
-                    elif valor == 'TRUE' or valor == 'True' or valor == 'true':
-                        tipo_real = 'bool'
-                    elif valor == 'FALSE' or valor == 'False' or valor == 'false':
-                        tipo_real = 'bool'
                     else:
                         tipo_real = 'object'
                 
                 print(f"Índice: {indice}, Valor: {valor}, Tipo Esperado: {tipo_esperado}, Tipo Real: {tipo_real}")
 
                 if tipo_esperado != tipo_real:
-                    if tipo_esperado != 'float64' and tipo_real != 'int64': 
+                    if not (tipo_esperado == 'float64' and tipo_real == 'int64'):
                         raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado")
-                    raise HTTPException(status_code=400, detail=f"O tipo de dados da coluna é diferente do esperado")
                      
                 
             if extensao_esperada != extensao_real:
@@ -374,3 +369,42 @@ async def get_usuario_uploads(userID: int = Path(..., title="ID do Usuário")):
         raise HTTPException(status_code=500, detail="Erro interno no servidor")
     finally:
         db.close()
+
+@app.post("/upload_foto_perfil/{usuario_id}")
+async def upload_foto_perfil(usuario_id: int, file: UploadFile = File(...)):
+    if not is_image(file.filename):
+        return {'status': 'failure', 'message': 'O arquivo deve ser uma imagem (png, jpg, jpeg, gif)!'}
+
+    objeto_nome = f'fotos/{file.filename}'
+    blob = bucket.blob(objeto_nome)
+
+    blob.upload_from_file(file.file)
+
+    caminho_completo = f'https://storage.googleapis.com/{bucket_name}/{objeto_nome}'
+
+    return {'status': 'success', 'message': 'Foto de perfil armazenada com sucesso', 'photo_url': caminho_completo}
+
+@app.put("/usuario/atualiza_foto_perfil")
+async def atualiza_foto_perfil(request_data: dict):
+    db = SessionLocal()
+    try:
+        id_usuario = request_data.get("id")
+        foto_perfil_url = request_data.get("fotoPerfilUrl")
+
+        query = text("""
+            UPDATE beaba.usuario
+            SET foto = :foto_perfil_url
+            WHERE id = :id_usuario
+        """)
+
+        # Imprimir detalhes para depuração
+        print(f"{id_usuario} e {foto_perfil_url} Query SQL:", query)
+
+        db.execute(query, {"foto_perfil_url": foto_perfil_url, "id_usuario": id_usuario})
+        db.commit()
+
+        return {'status': 'success', 'message': 'URL da foto de perfil atualizada com sucesso'}
+    except Exception as e:
+        # Imprimir detalhes para depuração
+        print(f"Erro ao atualizar a foto de perfil: {e}")
+        raise HTTPException(status_code=500, detail='Erro interno no servidor ao atualizar a foto de perfil')

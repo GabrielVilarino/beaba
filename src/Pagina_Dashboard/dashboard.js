@@ -28,7 +28,6 @@ function Dashboard() {
       year: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
-      second: 'numeric',
       timeZone: fusoHorario,
     };
 

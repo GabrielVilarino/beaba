@@ -24,10 +24,15 @@ function VerSquads() {
 
   const adicionaSquad = async (e) => {
     try {
-      await axios.post(`${serverUrl}/adicionar/squad?nome`, { nome: squadName });
-      alert('Squad cadastrada com sucesso!');
-      setSquadName('');
-      window.location.reload();
+      if(squadName === '') {
+        alert('Preencha o campo para adicionar uma squad');
+      }
+      else{
+        await axios.post(`${serverUrl}/adicionar/squad?nome`, { nome: squadName });
+        alert('Squad cadastrada com sucesso!');
+        setSquadName('');
+        window.location.reload();
+      }
     } catch (error) {
       console.error('Erro ao adicionar squad', error);
     }

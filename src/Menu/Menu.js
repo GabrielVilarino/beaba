@@ -7,6 +7,7 @@ import home from './assets/home.png';
 
 function Menu() {
   const [userName, setUserName] = useState('');
+  const[fotoURL, setFotoURL] = useState('');
   const serverUrl = 'http://localhost:3001';
   const userID = localStorage.getItem('userID');
   useEffect(() => {
@@ -16,6 +17,7 @@ function Menu() {
           const nomeCompleto = response.data.nome;
           const primeiroNome = nomeCompleto.split(' ')[0];
           setUserName(primeiroNome);
+          setFotoURL(response.data.foto);
         })
         .catch(error => {
           console.error('Erro ao obter nome do usuário:', error);
@@ -26,7 +28,7 @@ function Menu() {
   return (
     <div className='MenuAdmin'>
       <div className='Menu__perfilAdmin'>
-        <img src={imagemUsuario} alt='Imagem Usuario'></img>
+        <img src={fotoURL || imagemUsuario} alt='Imagem Usuario'></img>
         <div className='Menu__perfilAdmin_content'>
           <p>Administrador</p>
           <h5>{userName}</h5>

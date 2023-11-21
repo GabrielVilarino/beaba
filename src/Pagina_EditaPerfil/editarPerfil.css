@@ -23,6 +23,7 @@
 .fotoPerfil{
   width: 118px;
   height: 118px;
+  border-radius:55px;
 }
 
 .buttonEditaFoto{

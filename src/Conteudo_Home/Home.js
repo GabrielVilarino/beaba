@@ -4,7 +4,6 @@ import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import './Home.css';
 import logout from './assets/logout.png';
-import Modal from 'react-modal';
 
 function Home() {
   const userID = localStorage.getItem('userID');

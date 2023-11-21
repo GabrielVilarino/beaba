@@ -103,7 +103,7 @@ app.get('/usuario/nome', async (req, res) => {
       });
     }
     const connection = await connectionPromise;
-    const queryResult = await connection.query('SELECT nome FROM beaba.usuario WHERE id = $1', [userID]);
+    const queryResult = await connection.query('SELECT nome, foto FROM beaba.usuario WHERE id = $1', [userID]);
 
     if (queryResult.length === 0) {
       return res.status(404).json({ error: 'Usuário não encontrado.' });
@@ -211,7 +211,7 @@ app.get('/usuario/perfil', async (req, res) => {
       });
     }
     const connection = await connectionPromise;
-    const queryResult = await connection.query('SELECT nome, email, senha, id, perfil FROM beaba.usuario WHERE email = $1', [userEmail]);
+    const queryResult = await connection.query('SELECT nome, email, senha, id, perfil, foto FROM beaba.usuario WHERE email = $1', [userEmail]);
 
     if (queryResult.length === 0) {
       return res.status(404).json({ error: 'Usuário não encontrado.' });
@@ -320,6 +320,36 @@ app.put('/usuario/comum', async (req, res) => {
   } catch (error) {
     console.error('Erro ao alterar permissão: ', error);
     res.status(500).json({ error: 'Erro ao processar a solicitação.' });
+  }
+});
+
+app.get('/verifica/email', async (req, res) => {
+  try {
+    const userEmail = req.query.email;
+    if(!userEmail) {
+      return res.status(400).json({ error: 'O e-mail é obrigatório.' });
+    }
+
+    if (!connectionPromise) {
+      connectionPromise = await createConnection({
+        type: 'postgres',
+        host: 'localhost',
+        port: 5432,
+        username: 'postgres',
+        password: '880708',
+        database: 'postgres',
+        logging: true
+      });
+    }
+    const connection = await connectionPromise;
+    const queryResult = await connection.query('SELECT email FROM beaba.usuario WHERE email = $1', [userEmail]);
+
+    const emailExists = queryResult.length > 0;
+
+    res.json({ exists: emailExists });
+  } catch (error) {
+    console.error('Erro ao obter email: ', error);
+    res.status(500).json({ error: 'Erro ao processar a solicitação' });
   }
 });
 

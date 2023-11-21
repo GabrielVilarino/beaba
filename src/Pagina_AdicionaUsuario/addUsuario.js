@@ -17,6 +17,7 @@ function AddUsuario() {
     squad: ''
   });
   const [squadsData, setSquadsData] = useState([]);
+  const [emailExists, setEmailExists] = useState(false);
 
   useEffect(() => {
     async function squads() {
@@ -38,6 +39,16 @@ function AddUsuario() {
       alert('Preencha todos os campos!');
     }
 
+    const emailCheckResponse = await axios.get(
+      `${serverUrl}/verifica/email?email=${formData.email}`
+    );
+
+    if (emailCheckResponse.data.exists) {
+      alert('E-mail já cadastrado. Escolha outro e-mail.');
+      setEmailExists(true);
+      return;
+    }
+
     try{
       const response = await axios.post(serverUrl + '/usuario/cadastro', {
         nome: formData.nome,
@@ -56,6 +67,8 @@ function AddUsuario() {
           perfil: '',
           squad: ''
         });
+
+        setEmailExists(false);
       }
 
     }catch(error) {
@@ -78,7 +91,6 @@ function AddUsuario() {
         <div className='addUsuario_content'>
           <h1>Adicionar Usuário</h1>
           <img src={icone} alt='Foto Perfil' className='fotoPerfil'></img>
-          <button className='buttonAddFoto'>Editar Foto</button>
           <form className='formGrup' onSubmit={onSubmit}>
             <div>
               <label htmlFor='nome'>Nome:</label>
